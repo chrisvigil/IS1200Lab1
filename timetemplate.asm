@@ -24,7 +24,7 @@ main:
 	syscall
 	nop
 	# wait a little
-	li	$a0,2
+	li	$a0,20
 	jal	delay
 	nop
 	# call tick
@@ -101,7 +101,6 @@ delayd:	jr $ra
 
 time2string:
 	PUSH 	($ra)
-	PUSH	($v0)
 	PUSH 	($s0)
 	PUSH	($s1)
 	PUSH	($s2)
@@ -135,7 +134,6 @@ t2sdone: sb	$0,0($s4)	# adds null character to end of string
 	POP	($s2)
 	POP	($s1)
 	POP	($s0)
-	POP	($v0)
 	POP	($ra)
 	jr	$ra
 	
