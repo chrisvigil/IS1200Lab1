@@ -91,7 +91,7 @@ delay:
 	addi 	$a0,$a0,-1	# a0--
 	
 	add	$t1,$0,$0	# set t1 to 0
-	li	$t0,4711	
+	li	$t0,1#4711	
 dL:	ble	$t0,$t1,delay	# while t1 < t0
 	addi	$t1,$t1,1	# t1++	
 	nop
@@ -102,37 +102,36 @@ delayd:	jr $ra
 time2string:
 	PUSH 	($ra)
 	PUSH 	($s0)
-	PUSH	($s1)
-	PUSH	($s2)
-	PUSH	($s3)
-	PUSH	($s4)
 	PUSH 	($a0)
+
+	move	$s0,$a0		# Write to address
 	
-	addi	$s0,$0,16	# Itterator and shift offset
-	addi	$s1,$0,8	# : loop
-	addi	$s2,$0,0xf000	# mask
-	move	$s4,$a0		# Write to address
-	
-t2sloop: beq 	$0,$s0, t2sdone
-	addi	$s0,$s0,-4	# reduce itterator
-	and	$a0,$a1,$s2 	# mask value to a0
-	srl	$s2,$s2,4	# shift mask right
-	srlv	$a0,$a0,$s0	# shift right for hexasc
+	and	$a0,$a1,0xf000	# mask
+	srl 	$a0,$a0,12	# shift right for hexasc
 	jal	hexasc		# convert ascii char
-	sb	$v0,0($s4)	# store ascii char code to string
-	add	$s4,$s4,1	# moves write to address to next byte
-	bne 	$s0,$s1,t2sloop # excuted after 2nd digit
-	addi	$v0,$0,0x3a	# stores : as next char	
-	sb	$v0,0($s4)	# store ascii char code to string
-	add	$s4,$s4,1	# moves write to address to next byte
-	j	t2sloop
-t2sdone: sb	$0,0($s4)	# adds null character to end of string
+	sb	$v0,0($s0)	# store ascii char code to string
+	
+	and	$a0,$a1,0xf00	# mask
+	srl 	$a0,$a0,8	# shift right for hexasc
+	jal	hexasc		# convert ascii char
+	sb	$v0,1($s0)	# store ascii char code to string
+	
+	addi	$v0,$0,0x3a	# set v0 to :
+	sb	$v0,2($s0)	# store ascii char code to string
+	
+	and	$a0,$a1,0xf0	# mask
+	srl 	$a0,$a0,4	# shift right for hexasc
+	jal	hexasc		# convert ascii char
+	sb	$v0,3($s0)	# store ascii char code to string
+	
+	and	$a0,$a1,0xf	# mask
+	jal	hexasc		# convert ascii char
+	sb	$v0,4($s0)	# store ascii char code to string
+	
+	sb	$0,5($s0)	# append null byte
+
 	
 	POP	($a0)
-	POP	($s4)
-	POP	($s3)
-	POP	($s2)
-	POP	($s1)
 	POP	($s0)
 	POP	($ra)
 	jr	$ra
