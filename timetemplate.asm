@@ -109,13 +109,11 @@ time2string:
 
 	move	$s0,$a0		# Write to address
 	
-	#and	$a0,$a1,0xf000	# mask
 	srl 	$a0,$a1,12	# shift right for hexasc
 	jal	hexasc		# convert ascii char
 	nop
 	sb	$v0,0($s0)	# store ascii char code to string
 	
-	#and	$a0,$a1,0xf00	# mask
 	srl 	$a0,$a1,8	# shift right for hexasc
 	jal	hexasc		# convert ascii char
 	nop
@@ -124,7 +122,6 @@ time2string:
 	addi	$v0,$0,0x3a	# set v0 to :
 	sb	$v0,2($s0)	# store ascii char code to string
 	
-	#and	$a0,$a1,0xf0	# mask
 	srl 	$a0,$a1,4	# shift right for hexasc
 	jal	hexasc		# convert ascii char
 	nop
