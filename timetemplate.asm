@@ -75,6 +75,7 @@ tiend:	sw	$t0,0($a0)	# save updated result
   # you can write your code for subroutine "hexasc" below this line
   #
 hexasc:
+	andi	$a0,$a0,0xf	# sets all bits except the first 4 bits to 0
 	slti	$t0,$a0,10 	# sets t0 to 1 if less then 10, else 0
 	beq 	$t0,$zero,else  # branches to else if greater then nine
 	addi	$v0,$a0,0x30	# adds 0x30 to get correct hex value for 0 to 9
@@ -84,7 +85,6 @@ else:
 	addi	$v0,$a0,0x37	# adds 0x37 to get correct hex value for A to F
 	
 L1:
-	andi	$v0,$v0,0x7f	# sets bit 8 to MSB to 0 to ensure result is an ASCII value
 	jr	$ra
 	nop
 	
@@ -93,7 +93,7 @@ delay:
 	addi 	$a0,$a0,-1	# a0--
 	
 	add	$t1,$0,$0	# set t1 to 0
-	li	$t0,1#4711	
+	li	$t0,4711	
 dL:	ble	$t0,$t1,delay	# while t1 < t0
 	addi	$t1,$t1,1	# t1++	
 	nop
@@ -109,14 +109,14 @@ time2string:
 
 	move	$s0,$a0		# Write to address
 	
-	and	$a0,$a1,0xf000	# mask
-	srl 	$a0,$a0,12	# shift right for hexasc
+	#and	$a0,$a1,0xf000	# mask
+	srl 	$a0,$a1,12	# shift right for hexasc
 	jal	hexasc		# convert ascii char
 	nop
 	sb	$v0,0($s0)	# store ascii char code to string
 	
-	and	$a0,$a1,0xf00	# mask
-	srl 	$a0,$a0,8	# shift right for hexasc
+	#and	$a0,$a1,0xf00	# mask
+	srl 	$a0,$a1,8	# shift right for hexasc
 	jal	hexasc		# convert ascii char
 	nop
 	sb	$v0,1($s0)	# store ascii char code to string
@@ -124,8 +124,8 @@ time2string:
 	addi	$v0,$0,0x3a	# set v0 to :
 	sb	$v0,2($s0)	# store ascii char code to string
 	
-	and	$a0,$a1,0xf0	# mask
-	srl 	$a0,$a0,4	# shift right for hexasc
+	#and	$a0,$a1,0xf0	# mask
+	srl 	$a0,$a1,4	# shift right for hexasc
 	jal	hexasc		# convert ascii char
 	nop
 	sb	$v0,3($s0)	# store ascii char code to string
